@@ -28,7 +28,7 @@ public class MouseMoveTask extends Task {
     public void execute(String messageContent) throws AWTException {
 
                 Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-                // Имитация длительной работы
+                // Имитация длительной работы1
                 Point coord = coords.pop();
                 robot.mouseMove((int)(mouseLocation.getX()+coord.getX()), (int)(mouseLocation.getY()+coord.getY()));
                 System.out.println("Я буду работать в отдельном потоке, а не в главном.");
