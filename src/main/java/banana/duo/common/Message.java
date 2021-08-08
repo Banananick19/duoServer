@@ -10,10 +10,8 @@ public class Message {
     }
 
     public static Message parseString(String string) {
-        String stringMessageType = string.substring(string.indexOf("<") + 1);
-        stringMessageType = string.substring(0, string.indexOf(">"));
-        String stringContent = string.substring(string.indexOf(">") + 1);;
-        stringContent = string.substring(0, string.indexOf("\n"));
+        String stringMessageType = string.substring(string.indexOf("<") + 1, string.indexOf(">"));
+        String stringContent = string.substring(string.indexOf(">") + 1);
         return new Message(MessageType.valueOf(stringMessageType), stringContent);
     }
 
@@ -21,6 +19,11 @@ public class Message {
         String stringMessageType = string.substring(string.indexOf("<") + 1);
         stringMessageType = string.substring(0, string.indexOf(">"));
         return MessageType.valueOf(stringMessageType);
+    }
+
+
+    public String toString() {
+        return "<" + messageType.toString() + ">" + content;
     }
 
 
