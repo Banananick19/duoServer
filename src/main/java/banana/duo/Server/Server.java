@@ -2,6 +2,8 @@ package banana.duo.Server;
 
 import banana.duo.common.Message;
 import banana.duo.common.MessageType;
+import banana.duo.tasks.Task;
+import banana.duo.tasks.TaskFactory;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -12,13 +14,14 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.nio.channels.ServerSocketChannel;
 
-public class Server extends Observable {
+
+// TODO: оповещать только сообщения данного типа(иначе пизда)
+public class Server {
     private Socket clientSocket; //сокет для общения
     private ServerSocket server; // серверсокет
     private BufferedReader in; // поток чтения из сокета
     private BufferedWriter out; // поток записи в сокет
-    private HashMap<MessageType, Queue> messagesBuffer;
-    private List<Observer> observers;
+    private Map<MessageType, Task> runTask;
 
 
     public static void main(String[] parameters) throws IOException {
@@ -28,8 +31,6 @@ public class Server extends Observable {
     }
 
     public Server(int port, int backlog, InetAddress bindAddress) throws IOException {
-
-        observers = new ArrayList<>();
         Thread thread = new Thread(() -> {
             try {
                 startServer(port, backlog, bindAddress);
@@ -41,10 +42,10 @@ public class Server extends Observable {
     }
 
     private void startServer(int port, int backlog, InetAddress bindAddress) throws IOException {
+        runTask = new HashMap<>();
         server = new ServerSocket(port, backlog, bindAddress);
         System.out.println(this.getAddress());
         clientSocket = server.accept();
-        messagesBuffer = new HashMap<>();
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         System.out.println("Has connection: " + hasConnection());
@@ -57,12 +58,12 @@ public class Server extends Observable {
                 System.out.println(line);
                 Message message = Message.parseString(line);
                 System.out.println(message);
-                if (!messagesBuffer.containsKey(message.getMessageType())) {
-                    messagesBuffer.put(message.getMessageType(), new PriorityQueue<Message>());
-                }
                 System.out.println("Get MEssage");
-                //messagesBuffer.get(message.getMessageType()).add(message); //TODO: память заполнится(сообщения не выгружаются из очереди)
-                notifyObservers(message.toString());
+                if (!runTask.containsKey(message.getMessageType())) {
+                    Task task = TaskFactory.getTask(message.getMessageType());
+                    runTask.put(message.getMessageType(), task);
+                }
+                runTask.get(message.getMessageType()).update(message.getContent());
             } catch (IOException ex) {
                 ex.printStackTrace();
                 continue;
@@ -86,11 +87,6 @@ public class Server extends Observable {
         return in.readLine();
     }
 
-    public Message getMessage(MessageType messageType) throws IOException {
-        //TODO: сделать фильтр по типу.
-        return (Message) messagesBuffer.get(messageType).remove();
-    }
-
     public void disconnectClient() throws IOException {
         clientSocket.close();
     }
@@ -103,13 +99,4 @@ public class Server extends Observable {
         server.close();
     }
 
-
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-    private void notifyObservers(String message) {
-        for (Observer observer : observers) {
-            observer.update(this, message);
-        }
-    }
 }

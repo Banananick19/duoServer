@@ -6,14 +6,13 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
-abstract public class Task implements Observer {
-    private MessageType type;
+abstract public class Task {
+    protected MessageType type;
     private boolean run;
 
     abstract public void execute(String messageContent) throws AWTException;
 
-    @Override
-    public void update(Observable o, Object arg) {
+    public void update(Object arg) {
         try {
             execute((String) arg);
         } catch (AWTException e) {
@@ -27,11 +26,4 @@ abstract public class Task implements Observer {
         return type;
     }
 
-    public static Task task(MessageType type) {
-        switch (type) {
-            case MouseMove:
-                return new MouseMoveTask();
-        }
-        throw new IllegalArgumentException("Type " + type.toString() + " is illegal");
-    }
 }

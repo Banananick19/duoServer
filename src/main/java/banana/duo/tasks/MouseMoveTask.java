@@ -11,9 +11,10 @@ import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+
+//TODO: убрать говно отсюда(стак лишний)
 public class MouseMoveTask extends Task {
-    private MessageType messageType = MessageType.MouseMove;
-    private Stack<Point> coords;
+    private final MessageType messageType = MessageType.MouseMove;
     private Robot robot;
     public MouseMoveTask() {
         try {
@@ -21,32 +22,15 @@ public class MouseMoveTask extends Task {
         } catch (AWTException e) {
             e.printStackTrace();
         }
-        coords = new Stack<>();
 
     }
     @Override
     public void execute(String messageContent) throws AWTException {
+        int x = Integer.parseInt(messageContent.substring(0,messageContent.indexOf("|")));
+        int y = Integer.parseInt(messageContent.substring(messageContent.indexOf("|") + 1));
 
-                Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-                // Имитация длительной работы1
-                Point coord = coords.pop();
-                robot.mouseMove((int)(mouseLocation.getX()+coord.getX()), (int)(mouseLocation.getY()+coord.getY()));
-                System.out.println("Я буду работать в отдельном потоке, а не в главном.");
+        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+        robot.mouseMove((int)(mouseLocation.getX()+x), (int)(mouseLocation.getY()+y));
 
-    }
-
-
-    public void update(Observable o, Object messag) {
-        Message message = Message.parseString((String) messag);
-        int x = Integer.parseInt(message.getContent().substring(0, message.getContent().indexOf("|")));
-        int y = Integer.parseInt(message.getContent().substring(message.getContent().indexOf("|") + 1));
-        coords.push((Point) new Point(x, y));
-        System.out.println("Updated");
-        super.update(o, messag);
-    }
-
-    @Override
-    public MessageType getType() {
-        return messageType;
     }
 }

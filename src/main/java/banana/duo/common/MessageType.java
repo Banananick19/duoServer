@@ -1,5 +1,5 @@
 package banana.duo.common;
 
 public enum MessageType {
-    MouseMove, KeyBoardType;
+    MouseMove, KeyBoardType, MouseClick;
 }

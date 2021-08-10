@@ -32,9 +32,6 @@ public class Main {
 
         Server server = future.get();
         System.out.println("not blocking");
-        MouseMoveTask mouseMoveTask = new MouseMoveTask();
-
-        server.addObserver(mouseMoveTask);
 
         while (true) {
             Thread.sleep(20000);
