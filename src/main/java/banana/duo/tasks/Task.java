@@ -1,13 +1,11 @@
 package banana.duo.tasks;
 
-import banana.duo.common.MessageType;
+import banana.duo.common.ActionType;
 
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
 abstract public class Task {
-    protected MessageType type;
+    protected ActionType type;
     private boolean run;
 
     abstract public void execute(String messageContent) throws AWTException;
@@ -22,7 +20,7 @@ abstract public class Task {
     }
 
 
-    public MessageType getType() {
+    public ActionType getType() {
         return type;
     }
 

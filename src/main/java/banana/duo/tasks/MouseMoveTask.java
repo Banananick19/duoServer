@@ -1,20 +1,12 @@
 package banana.duo.tasks;
 
-import banana.duo.common.Message;
-import banana.duo.common.MessageType;
-import java.util.Observable;
+import banana.duo.common.ActionType;
 
 import java.awt.*;
-import java.net.InetAddress;
-import java.util.Queue;
-import java.util.Stack;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 
-//TODO: убрать говно отсюда(стак лишний)
 public class MouseMoveTask extends Task {
-    private final MessageType messageType = MessageType.MouseMove;
+    private final ActionType actionType = ActionType.MouseMove;
     private Robot robot;
     public MouseMoveTask() {
         try {

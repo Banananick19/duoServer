@@ -1,13 +1,13 @@
 package banana.duo.tasks;
 
-import banana.duo.common.MessageType;
+import banana.duo.common.ActionType;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
 
 public class MouseClickTask extends Task {
     Robot robot;
-    MessageType type = MessageType.MouseClick;
+    ActionType type = ActionType.MouseClick;
 
     public MouseClickTask() {
         try {
