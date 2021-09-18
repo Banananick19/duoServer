@@ -10,7 +10,7 @@ import static java.util.Map.entry;
 
 public class KeyPressTask extends Task {
     private Robot robot;
-    private ActionType type = ActionType.KeyPress;
+    private final ActionType type = ActionType.KeyPress;
     public KeyPressTask() {
         try {
             robot = new Robot();
@@ -20,9 +20,9 @@ public class KeyPressTask extends Task {
 
     }
     @Override
-    public void execute(String messageContent) throws AWTException {
-        int code = Integer.parseInt(messageContent.substring(0,messageContent.indexOf("|")));
-        String state = messageContent.substring(messageContent.indexOf("|") + 1);
+    public void execute(Map<String, String> messageContent) throws AWTException {
+        int code = Integer.parseInt(messageContent.get("code"));
+        String state = messageContent.get("state");
         if (state.equals("down")) {
             robot.keyPress(code);
         }
@@ -32,7 +32,7 @@ public class KeyPressTask extends Task {
     }
 
     @Override
-    public void update(Object arg) {
+    public void update(Map<String, String> arg) {
         super.update(arg);
     }
 

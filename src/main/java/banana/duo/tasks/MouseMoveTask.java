@@ -3,6 +3,7 @@ package banana.duo.tasks;
 import banana.duo.common.ActionType;
 
 import java.awt.*;
+import java.util.Map;
 
 
 public class MouseMoveTask extends Task {
@@ -17,9 +18,9 @@ public class MouseMoveTask extends Task {
 
     }
     @Override
-    public void execute(String messageContent) throws AWTException {
-        int x = Integer.parseInt(messageContent.substring(0,messageContent.indexOf("|")));
-        int y = Integer.parseInt(messageContent.substring(messageContent.indexOf("|") + 1));
+    public void execute(Map<String, String> messageContent) throws AWTException {
+        int x = Integer.parseInt(messageContent.get("x"));
+        int y = Integer.parseInt(messageContent.get("y"));
 
         Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
         robot.mouseMove((int)(mouseLocation.getX()+x), (int)(mouseLocation.getY()+y));

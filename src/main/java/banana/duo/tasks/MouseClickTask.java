@@ -4,6 +4,7 @@ import banana.duo.common.ActionType;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.util.Map;
 
 public class MouseClickTask extends Task {
     Robot robot;
@@ -18,8 +19,8 @@ public class MouseClickTask extends Task {
     }
 
     @Override
-    public void execute(String messageContent) {
-        switch (messageContent) {
+    public void execute(Map<String, String> messageContent) {
+        switch (messageContent.get("type")) {
             case "leftDown":
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                 return;
@@ -31,7 +32,6 @@ public class MouseClickTask extends Task {
                 return;
             case "rightUp":
                 robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
-                return;
         }
     }
 }
