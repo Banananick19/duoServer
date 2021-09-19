@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] parameters) throws IOException {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
-        Server server = (Server) context.getBean("server");
+        Server server = (Server) context.getBean("serverWiFi");
         server.startServer();
     }
 

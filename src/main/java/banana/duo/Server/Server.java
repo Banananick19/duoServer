@@ -15,46 +15,16 @@ import java.net.Socket;
 import java.util.*;
 
 
-@Component
-public class Server implements GsonUseable {
-    private Socket clientSocket; //сокет для общения
-    private ServerSocket serverSocket; // серверсокет
-    private BufferedReader in; // поток чтения из сокета
-    private BufferedWriter out; // поток записи в сокет
-    private final Map<ActionType, Task> runTask;
-    private String connectionTool;
 
-
-    public Server(@Value("0") int port, @Value("80") int backlog, @Value("wi-fi") String connectionTool) throws IOException {
-        this.connectionTool = connectionTool;
-        if (connectionTool.equals("wi-fi")) {
-            String ip = InetAddress.getLocalHost().getHostAddress();
-            serverSocket = new ServerSocket(port, backlog, InetAddress.getByName(ip)); //
-        }
-        runTask = new HashMap<>();
-        System.out.println(this.getAddress());
-    }
+abstract public class Server implements GsonUseable {
+    protected final Map<ActionType, Task> runTask = new HashMap<>();
 
 
     public void startServer() throws IOException {
-        clientSocket = serverSocket.accept();
-        in = new BufferedReader(getInputSteamReader());
-        out = new BufferedWriter(getOutputSteamWriter());
-        if (connectionTool.equals("wi-fi")) {
-            System.out.println("Has connection: " + clientSocket.isConnected() + " with address" + clientSocket.getInetAddress());
-        }
         Thread thread = new Thread(() -> {
             while (true) {
                 try {
                     String line = getLineIn();
-                    if ((line == null) | (Objects.equals(line, ""))) {
-                        if (!hasConnection()) {
-                            offServer();
-                            startServer();
-                            break;
-                        }
-                        continue;
-                    }
                     System.out.println(line);
                     Message message = gson.fromJson(line, Message.class);
                     System.out.println(message);
@@ -71,52 +41,8 @@ public class Server implements GsonUseable {
         thread.start();
     }
 
-    private boolean hasConnection() {
-        if (connectionTool.equals("wi-fi")) {
-            return clientSocket.isConnected();
-        }
-        return false;
-    }
-
-    private InputStreamReader getInputSteamReader() throws IOException {
-        if (connectionTool.equals("wi-fi")) {
-            return new InputStreamReader(clientSocket.getInputStream());
-        }
-        return new InputStreamReader(clientSocket.getInputStream()); //default
-    }
-
-    private OutputStreamWriter getOutputSteamWriter() throws IOException {
-        if (connectionTool.equals("wi-fi")) {
-            return new OutputStreamWriter(clientSocket.getOutputStream());
-        }
-        return new OutputStreamWriter(clientSocket.getOutputStream()); // default
-    }
-
-
-    public String getConnectionTool() {
-        return connectionTool;
-    }
-
-    public void setConnectionTool(String connectionTool) {
-        this.connectionTool = connectionTool;
-    }
-
-    public String getAddress() {
-        return serverSocket.getInetAddress().getHostAddress() + ":" + serverSocket.getLocalPort();
-    }
-
-    public String getLineIn() throws IOException {
-        return in.readLine();
-    }
-
-    public void sendMessage(Message message) throws IOException {
-        out.write(message.toString());
-    }
-
-    public void offServer() {
-        in = null;
-        out = null;
-        clientSocket = null;
-        serverSocket = null;
-    }
+    abstract protected boolean hasConnection();
+    abstract protected String getLineIn() throws IOException;
+    abstract protected void sendMessage(Message message) throws IOException;
+    abstract protected void offServer();
 }
