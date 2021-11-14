@@ -34,7 +34,7 @@ abstract public class Server implements GsonUseable {
                     }
                     runTask.get(message.getMessageType()).update(message.getContent());
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    offServer();
                 }
             }
         });

@@ -32,6 +32,12 @@ public class MouseClickTask extends Task {
                 return;
             case "rightUp":
                 robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+            case "middleDown":
+                robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
+                return;
+            case "middleUp":
+                robot.mouseRelease(InputEvent.BUTTON2_DOWN_MASK);
+                return;
         }
     }
 }

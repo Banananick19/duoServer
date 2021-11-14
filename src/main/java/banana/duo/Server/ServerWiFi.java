@@ -64,5 +64,10 @@ public class ServerWiFi extends Server implements GsonUseable {
         out = null;
         clientSocket = null;
         serverSocket = null;
+        try {
+            startServer();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }
