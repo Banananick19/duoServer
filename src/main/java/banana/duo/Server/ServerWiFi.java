@@ -31,7 +31,7 @@ public class ServerWiFi extends Server implements GsonUseable {
     }
 
 
-    public void startServer() throws IOException {
+    public void startServer() throws IOException, InterruptedException {
         clientSocket = serverSocket.accept();
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
@@ -42,6 +42,11 @@ public class ServerWiFi extends Server implements GsonUseable {
     @Override
     protected boolean hasConnection() {
         return clientSocket.isConnected();
+    }
+
+    @Override
+    protected void cleanIn() throws IOException {
+        // тут вроде и так норм
     }
 
     public String getAddress() {
@@ -66,7 +71,7 @@ public class ServerWiFi extends Server implements GsonUseable {
         serverSocket = null;
         try {
             startServer();
-        } catch (IOException exception) {
+        } catch (IOException | InterruptedException exception) {
             exception.printStackTrace();
         }
     }

@@ -1,6 +1,7 @@
 package banana.duo.tasks;
 
 import banana.duo.common.ActionType;
+import banana.duo.common.KeyCodes;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -21,12 +22,16 @@ public class KeyPressTask extends Task {
     }
     @Override
     public void execute(Map<String, String> messageContent) throws AWTException {
-        int code = Integer.parseInt(messageContent.get("code"));
+        int code = KeyCodes.keyCodes.get(messageContent.get("code"));
         String state = messageContent.get("state");
         if (state.equals("down")) {
             robot.keyPress(code);
         }
         if (state.equals("up")) {
+            robot.keyRelease(code);
+        }
+        else {
+            robot.keyPress(code);
             robot.keyRelease(code);
         }
     }

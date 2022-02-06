@@ -20,15 +20,23 @@ abstract public class Server implements GsonUseable {
     protected final Map<ActionType, Task> runTask = new HashMap<>();
 
 
-    public void startServer() throws IOException {
+    public void startServer() throws IOException, InterruptedException {
         Thread thread = new Thread(() -> {
             while (true) {
                 try {
                     String line = getLineIn();
+                    Message message = null;
                     System.out.println(line);
-                    Message message = gson.fromJson(line, Message.class);
-                    System.out.println(message);
+                    try{
+                        message = gson.fromJson(line, Message.class);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+
+                    System.out.println(message.getMessageType());
                     if (!runTask.containsKey(message.getMessageType())) {
+                        System.out.println("Должно работать");
                         Task task = TaskFactory.getTask(message.getMessageType());
                         runTask.put(message.getMessageType(), task);
                     }
@@ -42,6 +50,7 @@ abstract public class Server implements GsonUseable {
     }
 
     abstract protected boolean hasConnection();
+    abstract protected void cleanIn() throws IOException;
     abstract protected String getLineIn() throws IOException;
     abstract protected void sendMessage(Message message) throws IOException;
     abstract protected void offServer();
