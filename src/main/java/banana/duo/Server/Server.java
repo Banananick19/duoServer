@@ -20,7 +20,7 @@ abstract public class Server implements GsonUseable {
     protected final Map<ActionType, Task> runTask = new HashMap<>();
 
 
-    public void startServer() throws IOException, InterruptedException {
+    public Thread startServer() throws IOException, InterruptedException {
         Thread thread = new Thread(() -> {
             while (true) {
                 try {
@@ -41,17 +41,24 @@ abstract public class Server implements GsonUseable {
                         runTask.put(message.getMessageType(), task);
                     }
                     runTask.get(message.getMessageType()).update(message.getContent());
-                } catch (IOException ex) {
-                    offServer();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    try {
+                        offServer();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 }
             }
         });
         thread.start();
+        return thread;
     }
 
     abstract protected boolean hasConnection();
     abstract protected void cleanIn() throws IOException;
     abstract protected String getLineIn() throws IOException;
     abstract protected void sendMessage(Message message) throws IOException;
-    abstract protected void offServer();
+    abstract protected void offServer() throws IOException;
 }

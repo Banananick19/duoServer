@@ -15,24 +15,23 @@ import java.util.Arrays;
 public class ServerBluetooth extends Server {
 
     StreamConnectionNotifier server = null;
+    LocalDevice local;
+    StreamConnection conn;
     byte[] data = new byte[256];
     int length;
     InputStream in = null;
 
-    ServerBluetooth() throws IOException {
-
-    }
 
     @Override
-    public void startServer() throws IOException, InterruptedException {
-        LocalDevice local = LocalDevice.getLocalDevice();
+    public Thread startServer() throws IOException, InterruptedException {
+        local = LocalDevice.getLocalDevice();
         local.setDiscoverable(DiscoveryAgent.GIAC);
         server = (StreamConnectionNotifier) Connector.open(
                 "btspp://localhost:314443353731324B3531B0227AE1D02F");
-        StreamConnection conn = server.acceptAndOpen();
+        conn = server.acceptAndOpen();
         System.out.println("accepted");
         in = conn.openInputStream();
-        super.startServer();
+        return super.startServer();
     }
 
 
@@ -59,7 +58,9 @@ public class ServerBluetooth extends Server {
     }
 
     @Override
-    protected void offServer() {
-
+    protected void offServer() throws IOException, NullPointerException {
+        in.close();
+        conn.close();
+        server.close();
     }
 }

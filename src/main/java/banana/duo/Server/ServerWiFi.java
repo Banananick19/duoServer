@@ -31,12 +31,12 @@ public class ServerWiFi extends Server implements GsonUseable {
     }
 
 
-    public void startServer() throws IOException, InterruptedException {
+    public Thread startServer() throws IOException, InterruptedException {
         clientSocket = serverSocket.accept();
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         System.out.println("Has connection: " + clientSocket.isConnected() + " with address" + clientSocket.getInetAddress());
-        super.startServer();
+        return super.startServer();
     }
 
     @Override
